@@ -1,5 +1,18 @@
+body {
+	font-size: .75em;
+	padding: 1em;
+}
+
+table {
+	font-size: 1em;
+}
+
 td, th {
 	padding: .25em .5em;
+}
+
+tr {
+	border-bottom: dotted 1px #000;
 }
 
 .cap {
