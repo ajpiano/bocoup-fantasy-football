@@ -1,0 +1,16 @@
+td, th {
+	padding: .25em .5em;
+}
+
+.cap {
+	text-transform: uppercase;
+}
+.ctr {
+	text-align: center;
+}
+.lt {
+	text-align: left;
+}
+.rt {
+	text-align: right;
+}
