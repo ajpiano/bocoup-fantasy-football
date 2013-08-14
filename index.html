@@ -36,6 +36,7 @@
 		<thead>
 			<tr>
 				<td></td>
+				<td></td>
 				<td><input type="text" name="lastname" placeholder="Filter Last Name"></td>
 				<td><input type="text" name="firstname" placeholder="Filter First Name"></td>
 				<td><input type="text" name="team" placeholder="Filter Team"></td>
@@ -44,6 +45,7 @@
 			</tr>
 			<tr>
 				<th class="rank_col">Yahoo!<br />Rank</th>
+				<th class="rank_col">ESPN<br />Rank<br />
 				<th class="lt">Last Name</th>
 				<th class="lt">First Name</th>
 				<th>Team</th>
@@ -55,6 +57,7 @@
 		  {{#rows}}
 		  	<tr id="{{rowNumber}}" class="spotRow">
 		  		<td class="rt">{{rank}}</td>
+		  		<td class="rt">{{espnrank}}</td>
 		  		<td>{{lastname}}</td>
 		  		<td>{{firstname}}</td>
 		  		<td class="ctr cap">{{team}}</td>
@@ -157,20 +160,6 @@
 		  	buildAvailablePlayersTable();
 		  	buildTeamTables();
 
-		  	// when someone clicks on a row, highlight it and
-		  	// re-center the map
-		  	// $('.spotRow').live("click", function(event) {
-		  	// 	$('.spotRow').removeClass("selectedRow")
-		 		// 	var rowNumber = $(this).closest("tr").attr("id")
-		 		// 	$('#' + rowNumber).addClass("selectedRow")
-		 		// 	var dataElement = Sheetsee.getMatches(gData, rowNumber, "rowNumber")
-		 		// 	var selectedSpot = ich.selectedSpot({
-					//   rows: dataElement
-				 //  })
-				 //  $('#latestSpot').css("display", "none")
-				 //  $('#selectedSpot').html(selectedSpot).css("display", "inline")
-		 		// })
-
 				function buildTeamTables() {
 					var currentPlayer = null;
 					var currentTeam = null;
@@ -215,7 +204,7 @@
 					});
 
 					$( '#availablePlayersTable thead input' ).on( 'keyup', function() {
-						dataTable.fnFilter( this.value, $('#availablePlayersTable thead input').index(this) + 1 );
+						dataTable.fnFilter( this.value, $('#availablePlayersTable thead input').index(this) + 2 );
 					});		
 				}
 
