@@ -15,34 +15,43 @@
 	<div id="tabs">
 		<ul>
 			<li><a href="#tabs-1">Available Players</a></li>
-			<li><a href="#tabs-2">Teams</a></li>
+			<li id="tabs-2-link"><a href="#tabs-2">Teams</a></li>
 		</ul>
 		<div id="tabs-1">
-			<input id="availableTableFilter" class="tableFilter" type="text" placeholder="filter by.."></input>
-			<button class="clear">Clear</button>
-			<div id="availablePlayersTable"></div>
+			<table id="availablePlayersTable"></table>
 		</div>
-		<div id="tabs-2">
+		<div id="tabs-2" class="cf">
 		</div>
 	</div><!-- end wrapper -->
 
-	<script type="text/javascript" src="js/ICanHaz.js"></script>
-	<script type="text/javascript" src="js/lodash.js"></script>
-	<script type="text/javascript" src='js/jquery.js'></script>
-	<script type="text/javascript" src='js/jquery-ui.js'></script>
-	<script type="text/javascript" src='js/tabletop.js'></script>
-	<script type="text/javascript" src='js/sheetsee.js'></script>
+	<script src="js/ICanHaz.js"></script>
+	<script src="js/lodash.js"></script>
+	<script src='js/jquery.js'></script>
+	<script src='js/jquery-ui.js'></script>
+	<script src='js/jquery.dataTables.min.js'></script>
+	<script src='js/tabletop.js'></script>
+	<script src='js/sheetsee.js'></script>
 
 	<script id="availablePlayersTable" type="text/html">
-		<table>
+		<thead>
 			<tr>
-				<th>Yahoo!<br />Rank</th>
+				<td></td>
+				<td><input type="text" name="lastname" placeholder="Filter Last Name"></td>
+				<td><input type="text" name="firstname" placeholder="Filter First Name"></td>
+				<td><input type="text" name="team" placeholder="Filter Team"></td>
+				<td><input type="text" name="position" placeholder="Filter Position"></td>
+				<td></td>
+			</tr>
+			<tr>
+				<th class="rank_col">Yahoo!<br />Rank</th>
 				<th class="lt">Last Name</th>
 				<th class="lt">First Name</th>
 				<th>Team</th>
 				<th>Pos</th>
-				<th>Bye</th>
+				<th class="bye_col">Bye</th>
 			</tr>
+		</thead>
+		<tbody>
 		  {{#rows}}
 		  	<tr id="{{rowNumber}}" class="spotRow">
 		  		<td class="rt">{{rank}}</td>
@@ -53,12 +62,15 @@
 		  		<td class="rt">{{bye}}</td>
 	  		</tr>
 		  {{/rows}}
-	  </table>
+		</tbody>
 	</script>
 
 	<script id="teamTable" type="text/html">
-		<table class="teamTable">
+		<table class="teamTable" id="{{owner}}">
 			<thead>
+				<tr>
+					<th class="owner" colspan="5">{{owner}}</th>
+				</tr>
 				<tr>
 					<th>Pos</th>
 					<th>Last Name</th>
@@ -72,52 +84,59 @@
 
 	<script id="teamTableBody" type="text/html">
 		<tbody>
-			<tr>
-				<th>QB</th>
+			<tr class="qb">
+				<th class="ctr">QB</th>
 			</tr>
-			<tr>
-				<th>WR</th>
+			<tr class="wr">
+				<th class="ctr">WR</th>
 			</tr>
-			<tr>
-				<th>WR</th>
+			<tr class="wr">
+				<th class="ctr">WR</th>
 			</tr>
-			<tr>
-				<th>WR</th>
+			<tr class="wrt">
+				<th class="ctr">W/R/T</th>
 			</tr>
-			<tr>
-				<th>RB</th>
+			<tr class="rb">
+				<th class="ctr">RB</th>
 			</tr>
-			<tr>
-				<th>RB</th>
+			<tr class="rb">
+				<th class="ctr">RB</th>
 			</tr>
-			<tr>
-				<th>TE</th>
+			<tr class="te">
+				<th class="ctr">TE</th>
 			</tr>
-			<tr>
-				<th>K</th>
+			<tr class="k">
+				<th class="ctr">K</th>
 			</tr>
-			<tr>
-				<th>DEF</th>
+			<tr class="def">
+				<th class="ctr">DEF</th>
 			</tr>
-			<tr>
-				<th>BN</th>
+			<tr class="bn">
+				<th class="ctr">BN</th>
 			</tr>
-			<tr>
-				<th>BN</th>
+			<tr class="bn">
+				<th class="ctr">BN</th>
 			</tr>
-			<tr>
-				<th>BN</th>
+			<tr class="bn">
+				<th class="ctr">BN</th>
 			</tr>
-			<tr>
-				<th>BN</th>
+			<tr class="bn">
+				<th class="ctr">BN</th>
 			</tr>
-			<tr>
-				<th>BN</th>
+			<tr class="bn">
+				<th class="ctr">BN</th>
 			</tr>
-			<tr>
-				<th>BN</th>
+			<tr class="bn">
+				<th class="ctr">BN</th>
 			</tr>
 		</tbody>
+	</script>
+
+	<script id="rosterLine" type="text/html">
+		<td>{{lastname}}</td>
+		<td>{{firstname}}</td>
+		<td class="ctr cap">{{team}}</td>
+		<td class="rt">{{bye}}</td>
 	</script>
 
 	<script type="text/javascript">
@@ -131,24 +150,12 @@
 			$( '.clear' ).on('click', function(){
 				$(this).closest( '.tableFilter' ).val('');
 			});
-		
+
 		  function showInfo(data) {
 		  	var gData = data;
 
-		  	var availablePlayers = Sheetsee.getMatches(gData, '', 'draftedby');
-
-		  	var teamTable = ich.teamTable();
-		  	var teamTableBody = ich.teamTableBody();
-
-		  	var teams = _.uniq( _.pluck( gData, 'draftedby' ) );
-
-		  	$( '#tabs-2' ).html(teamTable);
-		  	$( '.teamTable' ).append( $( teamTableBody ) );
-
-
-		  	// make the table, and the search bar
-		  	Sheetsee.makeTable(availablePlayers, "#availablePlayersTable");
-		  	Sheetsee.initiateTableFilter(availablePlayers, "#availableTableFilter", "#availablePlayersTable");
+		  	buildAvailablePlayersTable();
+		  	buildTeamTables();
 
 		  	// when someone clicks on a row, highlight it and
 		  	// re-center the map
@@ -163,6 +170,54 @@
 				 //  $('#latestSpot').css("display", "none")
 				 //  $('#selectedSpot').html(selectedSpot).css("display", "inline")
 		 		// })
+
+				function buildTeamTables() {
+					var currentPlayer = null;
+					var currentTeam = null;
+					var currentRoster = null;
+					var rosterLength = 0;
+			  	var teamTableBody = ich.teamTableBody();
+
+			  	var teams = _.without( _.uniq( _.pluck( gData, 'draftedby' ) ), '');
+			  	var numTeams = teams.length;
+
+			  	if (numTeams) {
+
+			  		$('#tabs-2-link').show();
+
+				  	for (var i = 0; i < numTeams; i++) {
+				  		currentTeam = teams[i];
+				  		currentRoster = Sheetsee.getMatches(gData, currentTeam, 'draftedby');
+				  		rosterLength = currentRoster.length;
+
+					  	$( '#tabs-2' ).append( $( ich.teamTable({owner: teams[i]}) ).append( teamTableBody ) );
+
+					  	for( var j = 0; j < rosterLength; j++ ) {
+					  		$('#' + currentTeam).find('.' + currentRoster[j].posdrafted + ' th:only-child').parent().eq(0).append( ich.rosterLine(currentRoster[j]));
+
+					  	}
+
+				  	}
+
+			  	}
+
+				}
+
+				function buildAvailablePlayersTable() {
+
+			  	var availablePlayers = Sheetsee.getMatches(gData, '', 'draftedby');
+
+			  	Sheetsee.makeTable(availablePlayers, "#availablePlayersTable");
+
+					var dataTable = $( '#availablePlayersTable' ).dataTable({
+						bPaginate: false,
+						bJQueryUI: true
+					});
+
+					$( '#availablePlayersTable thead input' ).on( 'keyup', function() {
+						dataTable.fnFilter( this.value, $('#availablePlayersTable thead input').index(this) + 1 );
+					});		
+				}
 
 		 	}
 		});
